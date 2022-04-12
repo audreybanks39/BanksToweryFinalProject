@@ -7,48 +7,22 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.firebase.database.FirebaseDatabase;
+public class RegisterActivity extends AppCompatActivity {
 
-public class MainActivity extends AppCompatActivity {
-
-    private Button login;
     private Button register;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        register = findViewById(R.id.registerButton);
-        login = findViewById(R.id.loginButton);
+        setContentView(R.layout.activity_register);
 
+        register = findViewById(R.id.checkRegisterButton);
         register.setOnClickListener(new RegisterButtonClickListener());
-        login.setOnClickListener(new LoginButtonClickListener());
-
     }
 
     /**
      * Button that lets the users take a quiz.
      */
     private class RegisterButtonClickListener implements
-            View.OnClickListener {
-        /**
-         * onCLick function for our overview button
-         * takes us to the overview page, passing along the spinner selection
-         *
-         * @param view
-         */
-        @Override
-        public void onClick(View view) {
-            Intent intent = new
-                    Intent(view.getContext(),
-                    RegisterActivity.class);
-            startActivity(intent);
-        }
-    }
-    /**
-     * Button that lets the users take a quiz.
-     */
-    private class LoginButtonClickListener implements
             View.OnClickListener {
         /**
          * onCLick function for our overview button
