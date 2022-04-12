@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "841403530667",
+    "project_id": "bankstoweryfinalproject",
+    "storage_bucket": "bankstoweryfinalproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:841403530667:android:58489a726f6cd8d326a6ee",
+        "android_client_info": {
+          "package_name": "edu.uga.cs.bankstoweryfinalproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "841403530667-rf4h1a0nchiumk5q2pvnrlq095bli8f2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAk0X0DFdLQXV74tZIeaSUIewWDIcVLR0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "841403530667-rf4h1a0nchiumk5q2pvnrlq095bli8f2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
