@@ -10,6 +10,8 @@ import android.widget.Button;
 public class LoginActivity extends AppCompatActivity {
 
     private Button login;
+    private String email;
+    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new
                     Intent(view.getContext(),
                     HomeActivity.class);
+            email = findViewById(R.id.userText).toString();
+            password = findViewById(R.id.passwordText).toString();
             startActivity(intent);
         }
     }

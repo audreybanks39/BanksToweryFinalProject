@@ -10,6 +10,10 @@ import android.widget.Button;
 public class RegisterActivity extends AppCompatActivity {
 
     private Button register;
+    private String name;
+    private String email;
+    private String password;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +39,11 @@ public class RegisterActivity extends AppCompatActivity {
             Intent intent = new
                     Intent(view.getContext(),
                     LoginActivity.class);
+            //
+            email = findViewById(R.id.editTextTextEmailAddress).toString();
+            password = findViewById(R.id.editTextTextPassword2).toString();
+            name = findViewById(R.id.editTextTextPersonName).toString();
+
             startActivity(intent);
         }
     }
