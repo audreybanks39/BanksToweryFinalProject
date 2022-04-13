@@ -27,13 +27,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Button that lets the users take a quiz.
+     * Button that lets the users register.
      */
     private class RegisterButtonClickListener implements
             View.OnClickListener {
         /**
-         * onCLick function for our overview button
-         * takes us to the overview page, passing along the spinner selection
+         * onCLick function for our register button
+         * takes us to the register page
          *
          * @param view
          */
@@ -46,13 +46,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     /**
-     * Button that lets the users take a quiz.
+     * Button that lets the users login.
      */
     private class LoginButtonClickListener implements
             View.OnClickListener {
         /**
-         * onCLick function for our overview button
-         * takes us to the overview page, passing along the spinner selection
+         * onCLick function for our login button
+         * takes us to the login page
          *
          * @param view
          */
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View view) {
             Intent intent = new
                     Intent(view.getContext(),
-                    LoginActivity.class);
+                    HomeActivity.class);
             startActivity(intent);
         }
     }
