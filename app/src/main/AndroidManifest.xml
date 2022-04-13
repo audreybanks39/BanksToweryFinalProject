@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BanksToweryFinalProject">
         <activity
+            android:name=".MoneyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RecentPurchaseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GroceryListActivity"
+            android:exported="false" />
+        <activity
             android:name=".HomeActivity"
             android:exported="false" />
         <activity
