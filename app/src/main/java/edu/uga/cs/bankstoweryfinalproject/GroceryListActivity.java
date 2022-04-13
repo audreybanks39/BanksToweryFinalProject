@@ -8,6 +8,8 @@ import android.view.MenuItem;
 
 public class GroceryListActivity extends AppCompatActivity {
 
+    private ShoppingList list;
+    private String[] l1 = {"milk", "eggs", "Coffee"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
