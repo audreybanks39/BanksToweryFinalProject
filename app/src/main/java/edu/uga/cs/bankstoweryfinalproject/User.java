@@ -8,7 +8,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class User {
 
-    public String email;
     public String name;
     public float totalPurchased;
 
@@ -16,25 +15,17 @@ public class User {
         //Default Constructor used by the Firebase database.
     }
 
-    public User(String email, String name) {
-        this.email = email;
+    public User(String name) {
         this.name = name;
+        totalPurchased = 0.00f;
     }
 
     public float getTotalPurchased() {
         return totalPurchased;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public void setName(String name) {

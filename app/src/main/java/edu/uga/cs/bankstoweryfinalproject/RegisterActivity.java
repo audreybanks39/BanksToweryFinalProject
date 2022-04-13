@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -19,6 +20,8 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private EditText email;
+
+    private DatabaseHelper dr;
 
     private static final String DEBUG_TAG = "RegisterActivityDebug";
 
@@ -32,6 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
         password = findViewById(R.id.editTextTextPassword2);
         email = findViewById(R.id.editTextTextEmailAddress);
 
+        dr = new DatabaseHelper();
         register.setOnClickListener(new RegisterButtonClickListener());
     }
 
@@ -45,14 +49,22 @@ public class RegisterActivity extends AppCompatActivity {
         public void onClick(View view) {
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
-            String usernameText = username.toString();
-            String emailText = email.toString();
-            String passwordText = password.toString();
+            String usernameText = username.getText().toString();
+            String emailText = email.getText().toString();
+            String passwordText = password.getText().toString();
+
+            Log.d(DEBUG_TAG, "username: " + usernameText);
+            Log.d(DEBUG_TAG, "email: " + emailText);
+            Log.d(DEBUG_TAG, "password: " + passwordText);
 
             if (!usernameText.equals("") && !emailText.equals("") && !passwordText.equals("")) {
-                User newUser = new User(emailText, usernameText);
-                firebaseAuth.createUserWithEmailAndPassword(emailText, passwordText)
-                        .addOnCompleteListener(RegisterActivity.this, new SignUpCompleteListener<>());
+                if (dr.usernameExists(usernameText)) {
+                    Log.d(DEBUG_TAG, "That username already exists");
+                } else {
+                    User newUser = new User(usernameText);
+                    firebaseAuth.createUserWithEmailAndPassword(emailText, passwordText)
+                            .addOnCompleteListener(RegisterActivity.this, new SignUpCompleteListener<>(newUser));
+                }
             } else {
                 Log.d(DEBUG_TAG, "Fields must not be empty.");
                 //Make toast here
@@ -62,13 +74,19 @@ public class RegisterActivity extends AppCompatActivity {
 
     public class SignUpCompleteListener<Auth> implements OnCompleteListener<Auth> {
 
+        User newUser;
+
+        public SignUpCompleteListener(User newUser) {
+            this.newUser = newUser;
+        }
+
         @Override
         public void onComplete(@NonNull Task<Auth> task) {
             if (task.isSuccessful()) {
                 Log.d(DEBUG_TAG, "Sign up successful");
-
+                dr.createNewUser(newUser);
             } else {
-                Log.d(DEBUG_TAG, "Sign up failed");
+                Log.d(DEBUG_TAG, "Sign up failed: " + task.getException());
                 //Sign up failed
             }
         }
