@@ -13,6 +13,7 @@ public class HomeActivity extends AppCompatActivity {
     private Button recentPurchases;
     private Button money;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,8 +27,9 @@ public class HomeActivity extends AppCompatActivity {
         recentPurchases.setOnClickListener(new RecentButtonClickListener());
         money.setOnClickListener(new MoneyButtonClickListener());
 
+        }
 
-    }
+
     /**
      * Button that lets the users take a quiz.
      */

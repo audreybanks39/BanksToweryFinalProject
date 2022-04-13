@@ -1,6 +1,7 @@
 package edu.uga.cs.bankstoweryfinalproject;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,7 +18,7 @@ public class GroceryListActivity extends AppCompatActivity {
 
     private ListView listView;
     private ShoppingList list;
-    private String[] l1 = {"milk", "eggs", "Coffee"};
+    //private String[] l1 = {"milk", "eggs", "Coffee"};
     private Button add;
     private Button delete;
     private Button purchased;
@@ -37,18 +38,22 @@ public class GroceryListActivity extends AppCompatActivity {
         delete = findViewById(R.id.deleteButton);
         purchased = findViewById(R.id.purchasedButton);
 
+        list = new ShoppingList();
+        list.addItem("milk");
+        list.addItem("coffee");
 
         listView = findViewById(R.id.listContainer);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>
                 (GroceryListActivity.this,
                         android.R.layout.simple_list_item_multiple_choice,
-                        android.R.id.text1, l1);
+                        android.R.id.text1, list.getItems());
 
         listView.setAdapter(adapter);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-                Toast.makeText(getApplicationContext(), "long clicked", Toast.LENGTH_SHORT).show();
+                DialogFragment newFragment = new EditItemFragment();
+                newFragment.show( getSupportFragmentManager(), null);
                 return true;
             }
         });
@@ -87,10 +92,9 @@ public class GroceryListActivity extends AppCompatActivity {
          */
         @Override
         public void onClick(View view) {
-            Intent intent = new
-                    Intent(view.getContext(),
-                    HomeActivity.class);
-            startActivity(intent);
+            DialogFragment newFragment = new AddItemFragment();
+            newFragment.show( getSupportFragmentManager(), null);
         }
     }
+
 }
