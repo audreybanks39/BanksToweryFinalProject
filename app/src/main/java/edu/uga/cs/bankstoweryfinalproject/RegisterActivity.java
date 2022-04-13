@@ -3,6 +3,8 @@ package edu.uga.cs.bankstoweryfinalproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,7 +14,9 @@ import android.widget.EditText;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -21,7 +25,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText password;
     private EditText email;
 
-    private DatabaseHelper dr;
+    private DatabaseHelper databaseHelper;
 
     private static final String DEBUG_TAG = "RegisterActivityDebug";
 
@@ -35,7 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
         password = findViewById(R.id.editTextTextPassword2);
         email = findViewById(R.id.editTextTextEmailAddress);
 
-        dr = new DatabaseHelper();
+        databaseHelper = new DatabaseHelper();
         register.setOnClickListener(new RegisterButtonClickListener());
     }
 
@@ -58,33 +62,60 @@ public class RegisterActivity extends AppCompatActivity {
             Log.d(DEBUG_TAG, "password: " + passwordText);
 
             if (!usernameText.equals("") && !emailText.equals("") && !passwordText.equals("")) {
-                if (dr.usernameExists(usernameText)) {
-                    Log.d(DEBUG_TAG, "That username already exists");
-                } else {
-                    User newUser = new User(usernameText);
-                    firebaseAuth.createUserWithEmailAndPassword(emailText, passwordText)
-                            .addOnCompleteListener(RegisterActivity.this, new SignUpCompleteListener<>(newUser));
-                }
+                ValueEventListener nameListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        User user = snapshot.child("users").child(usernameText).getValue(User.class);
+                        if (user == null) {
+                            User newUser = new User(usernameText);
+                            firebaseAuth.createUserWithEmailAndPassword(emailText, passwordText)
+                                    .addOnCompleteListener(RegisterActivity.this, new SignUpCompleteListener<>(RegisterActivity.this, newUser));
+                        } else {
+                            //TODO: Make toast
+                            Log.d(DEBUG_TAG, user.name + " name is already taken.");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.w(DEBUG_TAG, "nameListener:onCancelled", error.toException());
+                    }
+                };
+                databaseHelper.dr.addListenerForSingleValueEvent(nameListener);
+
             } else {
                 Log.d(DEBUG_TAG, "Fields must not be empty.");
-                //Make toast here
+                //TODO: Make toast
             }
         }
     }
 
+    /**
+     * Creates a new user with the given email and password.
+     * @param <Auth> FirebaseAuth instance.
+     */
     public class SignUpCompleteListener<Auth> implements OnCompleteListener<Auth> {
 
         User newUser;
+        Context context;
 
-        public SignUpCompleteListener(User newUser) {
+        /**
+         * Constructor that takes the original
+         * @param context The original activity context.
+         * @param newUser The user to add to the database.
+         */
+        public SignUpCompleteListener(Context context, User newUser) {
             this.newUser = newUser;
+            this.context = context;
         }
 
         @Override
         public void onComplete(@NonNull Task<Auth> task) {
             if (task.isSuccessful()) {
                 Log.d(DEBUG_TAG, "Sign up successful");
-                dr.createNewUser(newUser);
+                databaseHelper.createNewUser(newUser);
+                Intent intent = new Intent(context, HomeActivity.class);
+                startActivity(intent);
             } else {
                 Log.d(DEBUG_TAG, "Sign up failed: " + task.getException());
                 //Sign up failed
