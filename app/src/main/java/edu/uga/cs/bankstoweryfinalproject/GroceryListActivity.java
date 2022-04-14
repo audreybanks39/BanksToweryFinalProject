@@ -7,15 +7,11 @@ import androidx.fragment.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.GestureDetector;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Checkable;
-import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -59,6 +55,7 @@ public class GroceryListActivity extends AppCompatActivity {
         add.setOnClickListener(new AddButtonClickListener());
         delete = findViewById(R.id.deleteButton);
         purchased = findViewById(R.id.purchasedButton);
+        purchased.setOnClickListener(new MarkAsPurchasedListener());
 
         listView = findViewById(R.id.listContainer);
         list = new ArrayList<>();
@@ -109,6 +106,53 @@ public class GroceryListActivity extends AppCompatActivity {
     }
 
     /**
+     * Button that adds checked items to the purchased list.
+     */
+    private class MarkAsPurchasedListener implements
+            View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            ArrayList<ShoppingItem> purchasedList = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                if (listView.isItemChecked(i)) {
+                    purchasedList.add(list.get(i));
+                    listView.setItemChecked(i, false);
+                }
+            }
+
+            for (int i = 0; i < purchasedList.size(); i++) {
+                removeShoppingItem(purchasedList.get(i));
+                addPurchasedItem(purchasedList.get(i));
+            }
+        }
+    }
+
+    /**
+     * Adds item to the purchased item database.
+     * @param item ShoppingItem to add.
+     */
+    private void addPurchasedItem(ShoppingItem item) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("purchasedItems");
+        item.id = databaseReference.push().getKey();
+
+        databaseReference.child(item.id).setValue(item);
+    }
+
+    /**
+     * Removes item from shopping list and shopping list database.
+     * @param item ShoppingItem to remove.
+     */
+    private void removeShoppingItem(ShoppingItem item) {
+        list.remove(item);
+        adapter.notifyDataSetChanged();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("shoppingList");
+        databaseReference.child(item.id).removeValue();
+    }
+
+
+    /**
      * Adds a new item to the shopping list in the database and updates the list.
      *
      * @param item the new shopping item to add to the list.
@@ -116,22 +160,22 @@ public class GroceryListActivity extends AppCompatActivity {
     public void onFinishNewShoppingItemDialog(ShoppingItem item) {
         shoppingRef = FirebaseDatabase.getInstance().getReference("shoppingList");
 
-        shoppingRef.push().setValue(item).addOnSuccessListener(new OnSuccessListener<Void>() {
+        item.id = shoppingRef.push().getKey();
+        shoppingRef.child(item.getId()).setValue(item).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 list.add(item);
                 adapter.notifyDataSetChanged();
 
-                Log.d(DEBUG_TAG, "Job lead saved: " + item);
+                Log.d(DEBUG_TAG, "item saved: " + item);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed to create a Shopping for " + item,
+                Toast.makeText(getApplicationContext(), "Failed to create a ShoppingItem for " + item,
                         Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     /**
@@ -152,17 +196,6 @@ public class GroceryListActivity extends AppCompatActivity {
                         android.R.id.text1, list);
 
                 listView.setAdapter(adapter);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        //listView.setItemChecked(i, !listView.isItemChecked(i));
-                        Log.d(DEBUG_TAG, listView.isItemChecked(i) + "");
-//                        SparseBooleanArray sparseBooleanArray = listView.getCheckedItemPositions();
-//                        for (int j = 0; j < sparseBooleanArray.size(); j++) {
-//                            Log.d(DEBUG_TAG, "" + sparseBooleanArray.get(j));
-//                        }
-                    }
-                });
 
                 listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
