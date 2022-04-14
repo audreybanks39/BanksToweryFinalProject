@@ -27,6 +27,10 @@ public class AddItemFragment extends DialogFragment {
         // Required empty public constructor
     }
 
+    public interface AddShoppingItemDialogListener {
+        void onFinishNewShoppingItemDialog(ShoppingItem item);
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -34,21 +38,21 @@ public class AddItemFragment extends DialogFragment {
         final View layout = inflater.inflate(R.layout.fragment_add_item,
                 (ViewGroup) getActivity().findViewById(R.id.root));
 
-        item = layout.findViewById( R.id.editText1 );
+        item = layout.findViewById(R.id.itemName1);
 
         androidx.appcompat.app.AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(layout);
 
         // Set the title of the AlertDialog
-        builder.setTitle( "New Grocery Item" );
-        builder.setNegativeButton( android.R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setTitle("New Grocery Item");
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
                 // close the dialog
                 dialog.dismiss();
             }
         });
-        builder.setPositiveButton( "SAVE", new ButtonClickListener() );
+        builder.setPositiveButton("SAVE", new ButtonClickListener());
 
         // Create the AlertDialog and show it
         return builder.create();
@@ -58,17 +62,13 @@ public class AddItemFragment extends DialogFragment {
         @Override
         public void onClick(DialogInterface dialog, int which) {
 
-            String name = item.getText().toString();
+            String itemText = item.getText().toString();
+            ShoppingItem newItem = new ShoppingItem();
+            newItem.setItem(itemText);
 
-           // JobLead jobLead = new JobLead( companyName, phone, url, comments );
+            GroceryListActivity itemDialogListener = (GroceryListActivity) getActivity();
+            itemDialogListener.onFinishNewShoppingItemDialog(newItem);
 
-            // get the Activity's listener to add the new job lead
-            //AddJobLeadDialogListener listener = (AddJobLeadDialogListener) getActivity();
-
-            // add the new job lead
-            //listener.onFinishAddJobLeadDialog( jobLead );
-
-            // close the dialog
             dismiss();
         }
     }

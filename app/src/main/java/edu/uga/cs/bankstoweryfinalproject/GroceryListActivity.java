@@ -5,6 +5,7 @@ import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,14 +15,24 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+
 public class GroceryListActivity extends AppCompatActivity {
 
     private ListView listView;
-    private ShoppingList list;
+    private ArrayList<ShoppingItem> list;
+    private ArrayAdapter<ShoppingItem> adapter;
     //private String[] l1 = {"milk", "eggs", "Coffee"};
     private Button add;
     private Button delete;
     private Button purchased;
+
+    private static final String DEBUG_TAG = "GroceryListActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +49,14 @@ public class GroceryListActivity extends AppCompatActivity {
         delete = findViewById(R.id.deleteButton);
         purchased = findViewById(R.id.purchasedButton);
 
-        list = new ShoppingList();
-        list.addItem("milk");
-        list.addItem("coffee");
+        list = new ArrayList<>();
+        ShoppingItem test = new ShoppingItem();
 
         listView = findViewById(R.id.listContainer);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+        adapter = new ArrayAdapter<>
                 (GroceryListActivity.this,
                         android.R.layout.simple_list_item_multiple_choice,
-                        android.R.id.text1, list.getItems());
+                        android.R.id.text1, list);
 
         listView.setAdapter(adapter);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -97,6 +107,27 @@ public class GroceryListActivity extends AppCompatActivity {
             DialogFragment newFragment = new AddItemFragment();
             newFragment.show(getSupportFragmentManager(), null);
         }
+    }
+
+    public void onFinishNewShoppingItemDialog(ShoppingItem item) {
+        DatabaseReference shoppingRef = FirebaseDatabase.getInstance().getReference("shoppingList");
+
+        shoppingRef.push().setValue(item).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                list.add(item);
+                adapter.notifyDataSetChanged();
+
+                Log.d(DEBUG_TAG, "Job lead saved: " + item);
+            }
+        }).addOnFailureListener( new OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText( getApplicationContext(), "Failed to create a Shopping for " + item,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
 }

@@ -25,8 +25,4 @@ public class DatabaseHelper {
         dr.child("users").child(user.name).setValue(user);
     }
 
-//    public List<String> getShoppingList() {
-//
-//    }
-
 }
