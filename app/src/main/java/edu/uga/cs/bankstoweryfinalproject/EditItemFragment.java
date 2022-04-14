@@ -16,8 +16,6 @@ import android.widget.EditText;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link EditItemFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class EditItemFragment extends DialogFragment {
 
