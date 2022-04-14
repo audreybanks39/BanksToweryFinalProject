@@ -14,6 +14,8 @@ import android.widget.EditText;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -62,11 +64,12 @@ public class RegisterActivity extends AppCompatActivity {
             Log.d(DEBUG_TAG, "password: " + passwordText);
 
             if (!usernameText.equals("") && !emailText.equals("") && !passwordText.equals("")) {
+
                 ValueEventListener nameListener = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         User user = snapshot.child("users").child(usernameText).getValue(User.class);
-                        if (user == null) {
+                        if (user == null) { //Check if the username has been taken
                             User newUser = new User(usernameText);
                             firebaseAuth.createUserWithEmailAndPassword(emailText, passwordText)
                                     .addOnCompleteListener(RegisterActivity.this, new SignUpCompleteListener<>(RegisterActivity.this, newUser));
@@ -91,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     /**
-     * Creates a new user with the given email and password.
+     * Checks if the account creation process is complete.
      * @param <Auth> FirebaseAuth instance.
      */
     public class SignUpCompleteListener<Auth> implements OnCompleteListener<Auth> {
@@ -114,11 +117,19 @@ public class RegisterActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
                 Log.d(DEBUG_TAG, "Sign up successful");
                 databaseHelper.createNewUser(newUser);
+
+                //Set the display name for the current user
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(newUser.name).build();
+                currentUser.updateProfile(userProfileChangeRequest);
+
+                //start home screen activity
                 Intent intent = new Intent(context, HomeActivity.class);
                 startActivity(intent);
             } else {
                 Log.d(DEBUG_TAG, "Sign up failed: " + task.getException());
-                //Sign up failed
+                //TODO: Make toast Sign up failed
             }
         }
     }

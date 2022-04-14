@@ -4,15 +4,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class HomeActivity extends AppCompatActivity {
 
     private Button grocery;
     private Button recentPurchases;
     private Button money;
+    private FirebaseUser currentUser;
 
+    private static final String DEBUG_TAG = "HomeActivityDebug";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +33,8 @@ public class HomeActivity extends AppCompatActivity {
         recentPurchases.setOnClickListener(new RecentButtonClickListener());
         money.setOnClickListener(new MoneyButtonClickListener());
 
-        }
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    }
 
 
     /**
@@ -43,12 +50,11 @@ public class HomeActivity extends AppCompatActivity {
          */
         @Override
         public void onClick(View view) {
-            Intent intent = new
-                    Intent(view.getContext(),
-                    RecentPurchaseActivity.class);
+            Intent intent = new Intent(view.getContext(), RecentPurchaseActivity.class);
             startActivity(intent);
         }
     }
+
     /**
      * Button that lets the users take a quiz.
      */
@@ -62,12 +68,11 @@ public class HomeActivity extends AppCompatActivity {
          */
         @Override
         public void onClick(View view) {
-            Intent intent = new
-                    Intent(view.getContext(),
-                    GroceryListActivity.class);
+            Intent intent = new Intent(view.getContext(), GroceryListActivity.class);
             startActivity(intent);
         }
     }
+
     /**
      * Button that lets the users take a quiz.
      */
@@ -81,9 +86,7 @@ public class HomeActivity extends AppCompatActivity {
          */
         @Override
         public void onClick(View view) {
-            Intent intent = new
-                    Intent(view.getContext(),
-                    MoneyActivity.class);
+            Intent intent = new Intent(view.getContext(), MoneyActivity.class);
             startActivity(intent);
         }
     }
