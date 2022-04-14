@@ -6,6 +6,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
+
 public class DatabaseHelper {
 
     public DatabaseReference dr;
@@ -22,5 +24,9 @@ public class DatabaseHelper {
     public void createNewUser(User user) {
         dr.child("users").child(user.name).setValue(user);
     }
+
+//    public List<String> getShoppingList() {
+//
+//    }
 
 }

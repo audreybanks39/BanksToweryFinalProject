@@ -16,6 +16,7 @@ public class ShoppingList {
         items = new ArrayList<>();
         //Default Constructor used by the Firebase databases
     }
+
     public void addItem(String s) {
         items.add(s);
     }

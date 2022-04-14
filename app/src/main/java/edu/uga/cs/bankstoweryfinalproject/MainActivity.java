@@ -103,9 +103,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.d(DEBUG_TAG, "MainActivity.onSignInResult: Failed to sign in");
             // Sign in failed. If response is null the user canceled the
-            Toast.makeText(getApplicationContext(),
-                    "Sign in failed",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Sign in failed", Toast.LENGTH_SHORT).show();
         }
     }
 }

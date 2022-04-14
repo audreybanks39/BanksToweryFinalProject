@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,6 +21,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * New user registration activity.
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     private Button register;
@@ -72,10 +76,10 @@ public class RegisterActivity extends AppCompatActivity {
                         if (user == null) { //Check if the username has been taken
                             User newUser = new User(usernameText);
                             firebaseAuth.createUserWithEmailAndPassword(emailText, passwordText)
-                                    .addOnCompleteListener(RegisterActivity.this, new SignUpCompleteListener<>(RegisterActivity.this, newUser));
+                                    .addOnCompleteListener(RegisterActivity.this, new SignUpCompleteListener<>(newUser));
                         } else {
-                            //TODO: Make toast
                             Log.d(DEBUG_TAG, user.name + " name is already taken.");
+                            Toast.makeText(getApplicationContext(), "Name is already taken.", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -88,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             } else {
                 Log.d(DEBUG_TAG, "Fields must not be empty.");
-                //TODO: Make toast
+                Toast.makeText(getApplicationContext(), "Fields must not be empty.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -100,16 +104,13 @@ public class RegisterActivity extends AppCompatActivity {
     public class SignUpCompleteListener<Auth> implements OnCompleteListener<Auth> {
 
         User newUser;
-        Context context;
 
         /**
-         * Constructor that takes the original
-         * @param context The original activity context.
+         * Constructor that takes the new user.
          * @param newUser The user to add to the database.
          */
-        public SignUpCompleteListener(Context context, User newUser) {
+        public SignUpCompleteListener(User newUser) {
             this.newUser = newUser;
-            this.context = context;
         }
 
         @Override
@@ -122,14 +123,15 @@ public class RegisterActivity extends AppCompatActivity {
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
                         .setDisplayName(newUser.name).build();
-                currentUser.updateProfile(userProfileChangeRequest);
 
-                //start home screen activity
-                Intent intent = new Intent(context, HomeActivity.class);
-                startActivity(intent);
+                currentUser.updateProfile(userProfileChangeRequest).addOnCompleteListener(task1 -> {
+                    //start home screen activity after display name is set.
+                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    startActivity(intent);
+                });
             } else {
                 Log.d(DEBUG_TAG, "Sign up failed: " + task.getException());
-                //TODO: Make toast Sign up failed
+                Toast.makeText(getApplicationContext(), "Sign up failed", Toast.LENGTH_SHORT).show();
             }
         }
     }

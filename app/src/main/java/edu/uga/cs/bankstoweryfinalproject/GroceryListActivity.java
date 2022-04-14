@@ -53,13 +53,15 @@ public class GroceryListActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
                 DialogFragment newFragment = new EditItemFragment();
-                newFragment.show( getSupportFragmentManager(), null);
+                newFragment.show(getSupportFragmentManager(), null);
                 return true;
             }
         });
     }
+
     /**
      * takes in the item and uses it to navigate back to the previous page
+     *
      * @param item
      * @return
      */
@@ -93,7 +95,7 @@ public class GroceryListActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             DialogFragment newFragment = new AddItemFragment();
-            newFragment.show( getSupportFragmentManager(), null);
+            newFragment.show(getSupportFragmentManager(), null);
         }
     }
 
