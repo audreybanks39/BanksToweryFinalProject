@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,6 +28,7 @@ public class HomeActivity extends AppCompatActivity {
     private Button recentPurchases;
     private Button money;
     private FirebaseUser currentUser;
+    private TextView text;
 
     private static final String DEBUG_TAG = "HomeActivityDebug";
 
@@ -46,6 +48,10 @@ public class HomeActivity extends AppCompatActivity {
         money.setOnClickListener(new MoneyButtonClickListener());
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        text = findViewById(R.id.textView);
+        String s = currentUser.getDisplayName();
+        text.setText("Welcome " + s + "!");
+
         Log.d(DEBUG_TAG, "Current user: " + currentUser.getEmail());
         if (currentUser.getDisplayName() != null) {
             Log.d(DEBUG_TAG, "Current user name: " + currentUser.getDisplayName());

@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,6 +40,7 @@ public class GroceryListActivity extends AppCompatActivity {
     private Button delete;
     private Button purchased;
 
+    private TextView text;
     private DatabaseReference shoppingRef;
     private FirebaseUser currentUser;
 
@@ -50,7 +52,6 @@ public class GroceryListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grocery_list);
         shoppingRef = FirebaseDatabase.getInstance().getReference();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
         //action bar to enable to back button
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
