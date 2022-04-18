@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,6 +38,7 @@ public class GroceryListActivity extends AppCompatActivity {
     private Button purchased;
 
     private DatabaseReference shoppingRef;
+    private FirebaseUser currentUser;
 
     private static final String DEBUG_TAG = "GroceryListActivity";
 
@@ -43,8 +46,8 @@ public class GroceryListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grocery_list);
-        shoppingRef = FirebaseDatabase.getInstance().getReference("shoppingList");
-
+        shoppingRef = FirebaseDatabase.getInstance().getReference();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         //action bar to enable to back button
         assert getSupportActionBar() != null;
@@ -54,6 +57,7 @@ public class GroceryListActivity extends AppCompatActivity {
         add = findViewById(R.id.addButton);
         add.setOnClickListener(new AddButtonClickListener());
         delete = findViewById(R.id.deleteButton);
+        delete.setOnClickListener(new DeleteShoppingItemListener());
         purchased = findViewById(R.id.purchasedButton);
         purchased.setOnClickListener(new MarkAsPurchasedListener());
 
@@ -62,7 +66,7 @@ public class GroceryListActivity extends AppCompatActivity {
         ShoppingItem test = new ShoppingItem();
 
         //get list from database and update local list
-        shoppingRef.addListenerForSingleValueEvent(initializeShoppingList());
+        shoppingRef.child("shoppingList").addListenerForSingleValueEvent(initializeShoppingList());
     }
 
     /**
@@ -113,17 +117,28 @@ public class GroceryListActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-            ArrayList<ShoppingItem> purchasedList = new ArrayList<>();
+            DialogFragment newFragment = new PurchaseItemFragment();
+            newFragment.show(getSupportFragmentManager(), null);
+        }
+    }
+
+    /**
+     * Button listener to remove items from the shopping list.
+     */
+    private class DeleteShoppingItemListener implements  View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            ArrayList<ShoppingItem> deleteList = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
                 if (listView.isItemChecked(i)) {
-                    purchasedList.add(list.get(i));
+                    deleteList.add(list.get(i));
                     listView.setItemChecked(i, false);
                 }
             }
 
-            for (int i = 0; i < purchasedList.size(); i++) {
-                removeShoppingItem(purchasedList.get(i));
-                addPurchasedItem(purchasedList.get(i));
+            for (int i = 0; i < deleteList.size(); i++) {
+                removeShoppingItem(deleteList.get(i));
             }
         }
     }
@@ -133,10 +148,9 @@ public class GroceryListActivity extends AppCompatActivity {
      * @param item ShoppingItem to add.
      */
     private void addPurchasedItem(ShoppingItem item) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("purchasedItems");
-        item.id = databaseReference.push().getKey();
+        item.id = shoppingRef.child("purchasedItems").push().getKey();
 
-        databaseReference.child(item.id).setValue(item);
+        shoppingRef.child("purchasedItems").child(item.id).setValue(item);
     }
 
     /**
@@ -147,10 +161,8 @@ public class GroceryListActivity extends AppCompatActivity {
         list.remove(item);
         adapter.notifyDataSetChanged();
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("shoppingList");
-        databaseReference.child(item.id).removeValue();
+        shoppingRef.child("shoppingList").child(item.id).removeValue();
     }
-
 
     /**
      * Adds a new item to the shopping list in the database and updates the list.
@@ -158,10 +170,8 @@ public class GroceryListActivity extends AppCompatActivity {
      * @param item the new shopping item to add to the list.
      */
     public void onFinishNewShoppingItemDialog(ShoppingItem item) {
-        shoppingRef = FirebaseDatabase.getInstance().getReference("shoppingList");
-
-        item.id = shoppingRef.push().getKey();
-        shoppingRef.child(item.getId()).setValue(item).addOnSuccessListener(new OnSuccessListener<Void>() {
+        item.id = shoppingRef.child("shoppingList").push().getKey();
+        shoppingRef.child("shoppingList").child(item.getId()).setValue(item).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 list.add(item);
@@ -174,6 +184,41 @@ public class GroceryListActivity extends AppCompatActivity {
             public void onFailure(Exception e) {
                 Toast.makeText(getApplicationContext(), "Failed to create a ShoppingItem for " + item,
                         Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Moves the marked items to the purchased list and add the total item price to the current
+     * users totalPurchased value.
+     * @param price The price of the total items marked.
+     */
+    public void onFinishPurchaseItemDialog(float price) {
+        shoppingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.child("users").child(currentUser.getDisplayName()).getValue(User.class);
+                user.totalPurchased = user.totalPurchased + price;
+                shoppingRef.child("users").child(currentUser.getDisplayName())
+                        .child("totalPurchased").setValue(user.totalPurchased);
+
+                ArrayList<ShoppingItem> purchasedList = new ArrayList<>();
+                for (int i = 0; i < list.size(); i++) {
+                    if (listView.isItemChecked(i)) {
+                        purchasedList.add(list.get(i));
+                        listView.setItemChecked(i, false);
+                    }
+                }
+
+                for (int i = 0; i < purchasedList.size(); i++) {
+                    removeShoppingItem(purchasedList.get(i));
+                    addPurchasedItem(purchasedList.get(i));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }

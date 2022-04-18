@@ -19,6 +19,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 /**
@@ -30,8 +32,6 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private EditText email;
-
-    private DatabaseHelper databaseHelper;
 
     private static final String DEBUG_TAG = "RegisterActivityDebug";
 
@@ -45,7 +45,6 @@ public class RegisterActivity extends AppCompatActivity {
         password = findViewById(R.id.editTextTextPassword2);
         email = findViewById(R.id.editTextTextEmailAddress);
 
-        databaseHelper = new DatabaseHelper();
         register.setOnClickListener(new RegisterButtonClickListener());
     }
 
@@ -58,6 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
             String usernameText = username.getText().toString();
             String emailText = email.getText().toString();
@@ -88,7 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
                         Log.w(DEBUG_TAG, "nameListener:onCancelled", error.toException());
                     }
                 };
-                databaseHelper.dr.addListenerForSingleValueEvent(nameListener);
+                databaseReference.addListenerForSingleValueEvent(nameListener);
 
             } else {
                 Log.d(DEBUG_TAG, "Fields must not be empty.");
@@ -117,7 +117,8 @@ public class RegisterActivity extends AppCompatActivity {
         public void onComplete(@NonNull Task<Auth> task) {
             if (task.isSuccessful()) {
                 Log.d(DEBUG_TAG, "Sign up successful");
-                databaseHelper.createNewUser(newUser);
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                databaseReference.child("users").child(newUser.name).setValue(newUser);
 
                 //Set the display name for the current user
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();

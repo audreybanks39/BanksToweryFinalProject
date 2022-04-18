@@ -14,6 +14,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class HomeActivity extends AppCompatActivity {
@@ -22,7 +24,6 @@ public class HomeActivity extends AppCompatActivity {
     private Button recentPurchases;
     private Button money;
     private FirebaseUser currentUser;
-    private DatabaseHelper databaseHelper;
 
     private static final String DEBUG_TAG = "HomeActivityDebug";
 
@@ -30,8 +31,6 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        databaseHelper = new DatabaseHelper();
 
         grocery = findViewById(R.id.groceryButton);
         recentPurchases = findViewById(R.id.recentPurchaseButton);
@@ -45,7 +44,8 @@ public class HomeActivity extends AppCompatActivity {
         Log.d(DEBUG_TAG, "Current user: " + currentUser.getEmail());
         if (currentUser.getDisplayName() != null) {
             Log.d(DEBUG_TAG, "Current user name: " + currentUser.getDisplayName());
-            databaseHelper.dr.addListenerForSingleValueEvent(createNameListener());
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            databaseReference.addListenerForSingleValueEvent(createNameListener());
         }
     }
 
@@ -116,7 +116,8 @@ public class HomeActivity extends AppCompatActivity {
                 User user = snapshot.child("users").child(currentUser.getDisplayName()).getValue(User.class);
                 if (user == null) { //Check if the user name is saved in the users database.
                     User newUser = new User(currentUser.getDisplayName());
-                    databaseHelper.createNewUser(newUser);
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                    databaseReference.child("users").child(newUser.name).setValue(newUser);
                 }
             }
 
