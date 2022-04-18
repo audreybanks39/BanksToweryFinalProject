@@ -27,7 +27,7 @@ public class PurchaseItemFragment extends DialogFragment {
     }
 
     public interface PurchaseItemDialogListener {
-        void onFinishPurchaseItemDialog();
+        void onFinishPurchaseItemDialog(float price);
     }
 
     @Override

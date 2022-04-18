@@ -236,6 +236,10 @@ public class GroceryListActivity extends AppCompatActivity {
         });
     }
 
+    public void onFinishEditItemDialog(int pos, String itemName) {
+        //TODO: get item at pos and replace item name
+    }
+
     /**
      * Cretes ValueEventListener that initializes the shopping list.
      * @return ValueEventListener.
@@ -258,7 +262,7 @@ public class GroceryListActivity extends AppCompatActivity {
                 listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-                        DialogFragment newFragment = new EditItemFragment();
+                        DialogFragment newFragment = EditItemFragment.newInstance(pos);
                         newFragment.show(getSupportFragmentManager(), null);
                         return true;
                     }

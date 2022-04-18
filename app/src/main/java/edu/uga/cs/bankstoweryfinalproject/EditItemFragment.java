@@ -20,9 +20,24 @@ import android.widget.EditText;
 public class EditItemFragment extends DialogFragment {
 
     private EditText item;
+    private static String ITEM_POS = "ITEM_POS";
+    private int pos;
 
     public EditItemFragment() {
         // Required empty public constructor
+    }
+
+    //TODO: Send item name
+    public static EditItemFragment newInstance(int pos) {
+        EditItemFragment editItemFragment = new EditItemFragment();
+        Bundle args = new Bundle();
+        args.putInt(ITEM_POS, pos);
+        editItemFragment.setArguments(args);
+        return editItemFragment;
+    }
+
+    public interface EditItemDialogListener {
+        void onFinishEditItemDialog();
     }
 
     @Override
@@ -55,19 +70,12 @@ public class EditItemFragment extends DialogFragment {
     private class EditButtonClickListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-
             String name = item.getText().toString();
 
-                    // JobLead jobLead = new JobLead( companyName, phone, url, comments );
+            GroceryListActivity itemDialogListener = (GroceryListActivity) getActivity();
+            itemDialogListener.onFinishEditItemDialog(pos, name);
 
-                    // get the Activity's listener to add the new job lead
-                    //AddJobLeadDialogListener listener = (AddJobLeadDialogListener) getActivity();
-
-                    // add the new job lead
-                    //listener.onFinishAddJobLeadDialog( jobLead );
-
-                    // close the dialog
-                            dismiss();
+            dismiss();
         }
     }
 
