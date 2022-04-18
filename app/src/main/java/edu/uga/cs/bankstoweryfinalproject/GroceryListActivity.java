@@ -7,6 +7,8 @@ import androidx.fragment.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -69,6 +71,12 @@ public class GroceryListActivity extends AppCompatActivity {
         shoppingRef.child("shoppingList").addListenerForSingleValueEvent(initializeShoppingList());
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
     /**
      * takes in the item and uses it to navigate back to the previous page
      *
@@ -87,6 +95,10 @@ public class GroceryListActivity extends AppCompatActivity {
             //
             supportNavigateUpTo(new Intent(this, HomeActivity.class));
             return true;
+        } else if (id == R.id.logout){
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

@@ -4,7 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class RecentPurchaseActivity extends AppCompatActivity {
 
@@ -16,6 +20,12 @@ public class RecentPurchaseActivity extends AppCompatActivity {
         //action bar to enable to back button
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
     }
 
     /**
@@ -35,7 +45,11 @@ public class RecentPurchaseActivity extends AppCompatActivity {
             //
             supportNavigateUpTo(new Intent(this, HomeActivity.class));
             return true;
-        }
+        } else if (id == R.id.logout){
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
+    }
         return super.onOptionsItemSelected(item);
     }
 }
