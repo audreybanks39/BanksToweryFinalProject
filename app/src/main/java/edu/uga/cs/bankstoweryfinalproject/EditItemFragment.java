@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -21,17 +23,20 @@ public class EditItemFragment extends DialogFragment {
 
     private EditText item;
     private static String ITEM_POS = "ITEM_POS";
+    private static String ITEM_NAME = "ITEM_NAME";
     private int pos;
+    private String name;
 
     public EditItemFragment() {
         // Required empty public constructor
     }
 
     //TODO: Send item name
-    public static EditItemFragment newInstance(int pos) {
+    public static EditItemFragment newInstance(int pos, String name) {
         EditItemFragment editItemFragment = new EditItemFragment();
         Bundle args = new Bundle();
         args.putInt(ITEM_POS, pos);
+        args.putString(ITEM_NAME, name);
         editItemFragment.setArguments(args);
         return editItemFragment;
     }
@@ -43,11 +48,15 @@ public class EditItemFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+        pos = getArguments().getInt(ITEM_POS);
+        name = getArguments().getString(ITEM_NAME);
+
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View layout = inflater.inflate(R.layout.fragment_add_item,
+        final View layout = inflater.inflate(R.layout.fragment_edit_item,
                 (ViewGroup) getActivity().findViewById(R.id.frameLayout));
 
         item = layout.findViewById(R.id.editTextItemName);
+        item.setText(name);
 
         androidx.appcompat.app.AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(layout);

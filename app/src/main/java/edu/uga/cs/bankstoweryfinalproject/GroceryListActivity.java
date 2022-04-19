@@ -237,7 +237,11 @@ public class GroceryListActivity extends AppCompatActivity {
     }
 
     public void onFinishEditItemDialog(int pos, String itemName) {
-        //TODO: get item at pos and replace item name
+        list.get(pos).setItem(itemName);
+        adapter.notifyDataSetChanged();
+
+        shoppingRef.child("shoppingList").child(list.get(pos).id).child("item")
+                .setValue(list.get(pos).item);
     }
 
     /**
@@ -262,7 +266,7 @@ public class GroceryListActivity extends AppCompatActivity {
                 listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-                        DialogFragment newFragment = EditItemFragment.newInstance(pos);
+                        DialogFragment newFragment = EditItemFragment.newInstance(pos, list.get(pos).item);
                         newFragment.show(getSupportFragmentManager(), null);
                         return true;
                     }
