@@ -31,7 +31,6 @@ public class EditItemFragment extends DialogFragment {
         // Required empty public constructor
     }
 
-    //TODO: Send item name
     public static EditItemFragment newInstance(int pos, String name) {
         EditItemFragment editItemFragment = new EditItemFragment();
         Bundle args = new Bundle();

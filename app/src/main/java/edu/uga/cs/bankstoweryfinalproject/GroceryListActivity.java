@@ -28,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class GroceryListActivity extends AppCompatActivity {
@@ -35,12 +36,11 @@ public class GroceryListActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayList<ShoppingItem> list;
     private ArrayAdapter<ShoppingItem> adapter;
-    //private String[] l1 = {"milk", "eggs", "Coffee"};
+
     private Button add;
     private Button delete;
     private Button purchased;
 
-    private TextView text;
     private DatabaseReference shoppingRef;
     private FirebaseUser currentUser;
 
@@ -66,7 +66,6 @@ public class GroceryListActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.listContainer);
         list = new ArrayList<>();
-        ShoppingItem test = new ShoppingItem();
 
         //get list from database and update local list
         shoppingRef.child("shoppingList").addListenerForSingleValueEvent(initializeShoppingList());
@@ -162,7 +161,6 @@ public class GroceryListActivity extends AppCompatActivity {
      */
     private void addPurchasedItem(ShoppingItem item) {
         item.id = shoppingRef.child("purchasedItems").push().getKey();
-
         shoppingRef.child("purchasedItems").child(item.id).setValue(item);
     }
 
@@ -173,7 +171,6 @@ public class GroceryListActivity extends AppCompatActivity {
     private void removeShoppingItem(ShoppingItem item) {
         list.remove(item);
         adapter.notifyDataSetChanged();
-
         shoppingRef.child("shoppingList").child(item.id).removeValue();
     }
 
@@ -223,10 +220,16 @@ public class GroceryListActivity extends AppCompatActivity {
                     }
                 }
 
+                PurchasedGroup purchasedGroup = new PurchasedGroup();
+                purchasedGroup.setShoppingItems(purchasedList);
+                purchasedGroup.setTotalPrice(price);
+
                 for (int i = 0; i < purchasedList.size(); i++) {
                     removeShoppingItem(purchasedList.get(i));
-                    addPurchasedItem(purchasedList.get(i));
                 }
+
+                purchasedGroup.id = shoppingRef.child("purchasedItems").push().getKey();
+                shoppingRef.child("purchasedItems").child(purchasedGroup.id).setValue(purchasedGroup);
             }
 
             @Override

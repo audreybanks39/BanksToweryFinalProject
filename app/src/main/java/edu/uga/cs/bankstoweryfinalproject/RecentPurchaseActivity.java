@@ -7,19 +7,48 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class RecentPurchaseActivity extends AppCompatActivity {
+    private ListView listView;
+    private ArrayList<PurchasedGroup> list;
+    private ArrayAdapter<PurchasedGroup> adapter;
+
+    private Button delete;
+    private Button settleCost;
+
+    private DatabaseReference shoppingRef;
+    private FirebaseUser currentUser;
+
+    private static final String DEBUG_TAG = "RecentPurchaseActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recent_purchase);
+        shoppingRef = FirebaseDatabase.getInstance().getReference();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         //action bar to enable to back button
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        delete = findViewById(R.id.deleteButton2);
+        //TODO: Add listener
+        settleCost = findViewById(R.id.settleCostButton);
+        //TODO: Add listener
+
+        listView = findViewById(R.id.listContainer2);
+        list = new ArrayList<>();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
