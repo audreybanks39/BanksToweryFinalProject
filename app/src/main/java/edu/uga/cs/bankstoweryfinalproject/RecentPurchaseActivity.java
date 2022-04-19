@@ -1,20 +1,29 @@
 package edu.uga.cs.bankstoweryfinalproject;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -25,6 +34,7 @@ public class RecentPurchaseActivity extends AppCompatActivity {
 
     private Button delete;
     private Button settleCost;
+    private TextView totalCost;
 
     private DatabaseReference shoppingRef;
     private FirebaseUser currentUser;
@@ -43,13 +53,35 @@ public class RecentPurchaseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         delete = findViewById(R.id.deleteButton2);
-        //TODO: Add listener
+        delete.setOnClickListener(new DeleteButtonListener());
         settleCost = findViewById(R.id.settleCostButton);
-        //TODO: Add listener
+        settleCost.setOnClickListener(new SettleCostButtonListener());
+        totalCost = findViewById(R.id.totalCost);
 
         listView = findViewById(R.id.listContainer2);
         list = new ArrayList<>();
+
+        shoppingRef.child("purchasedItems").addListenerForSingleValueEvent(initializePurchaseList());
     }
+
+    private class DeleteButtonListener implements
+            View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+
+        }
+    }
+
+    private class SettleCostButtonListener implements
+            View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -59,6 +91,7 @@ public class RecentPurchaseActivity extends AppCompatActivity {
 
     /**
      * takes in the item and uses it to navigate back to the previous page
+     *
      * @param item
      * @return
      */
@@ -74,11 +107,48 @@ public class RecentPurchaseActivity extends AppCompatActivity {
             //
             supportNavigateUpTo(new Intent(this, HomeActivity.class));
             return true;
-        } else if (id == R.id.logout){
-        FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-    }
+        } else if (id == R.id.logout) {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Creates ValueEventListener that initializes the purchased list.
+     * @return ValueEventListener.
+     */
+    private ValueEventListener initializePurchaseList() {
+        return new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d(DEBUG_TAG, "snapshot children: " + snapshot.getChildrenCount());
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                    PurchasedGroup purchasedGroup = dataSnapshot.getValue(PurchasedGroup.class);
+                    list.add(purchasedGroup);
+                    Log.d(DEBUG_TAG, "item added.");
+                }
+
+                adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_multiple_choice,
+                        android.R.id.text1, list);
+
+                listView.setAdapter(adapter);
+
+//                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//                    @Override
+//                    public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+//                        DialogFragment newFragment = EditItemFragment.newInstance(pos, list.get(pos).item);
+//                        newFragment.show(getSupportFragmentManager(), null);
+//                        return true;
+//                    }
+//                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d(DEBUG_TAG, "Error reading the database.");
+            }
+        };
     }
 }

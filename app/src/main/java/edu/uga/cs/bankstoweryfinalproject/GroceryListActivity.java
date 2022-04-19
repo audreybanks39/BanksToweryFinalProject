@@ -31,6 +31,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+/**
+ * Activity that holds the shopping list
+ */
 public class GroceryListActivity extends AppCompatActivity {
 
     private ListView listView;
@@ -248,7 +251,7 @@ public class GroceryListActivity extends AppCompatActivity {
     }
 
     /**
-     * Cretes ValueEventListener that initializes the shopping list.
+     * Creates ValueEventListener that initializes the shopping list.
      * @return ValueEventListener.
      */
     private ValueEventListener initializeShoppingList() {
@@ -261,7 +264,7 @@ public class GroceryListActivity extends AppCompatActivity {
                     Log.d(DEBUG_TAG, "item added: " + shoppingItem.item);
                 }
 
-                adapter = new ArrayAdapter<>(GroceryListActivity.this, android.R.layout.simple_list_item_multiple_choice,
+                adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_multiple_choice,
                         android.R.id.text1, list);
 
                 listView.setAdapter(adapter);
