@@ -1,21 +1,38 @@
 package edu.uga.cs.bankstoweryfinalproject;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentContainerView;
+import androidx.fragment.app.ListFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MoneyActivity extends AppCompatActivity {
 
+
+    private TextView totalCost;
+    private TextView costPer;
+
+    private Button button;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_money);
+
+        totalCost = findViewById(R.id.totalCost);
+        costPer = findViewById(R.id.CostPerRoomie);
+
+        button = findViewById(R.id.moneyBreakdownButton);
+        button.setOnClickListener(new DebtButtonClickListener());
 
         //action bar to enable to back button
         assert getSupportActionBar() != null;
@@ -51,6 +68,25 @@ public class MoneyActivity extends AppCompatActivity {
         startActivity(intent);
     }
         return super.onOptionsItemSelected(item);
+    }
+    /**
+     * Button that lets the users return their money balance to zero.
+     */
+    private class DebtButtonClickListener implements
+            View.OnClickListener {
+        /**
+         * onCLick function for our debt button
+         * clears debts to zero
+         *
+         * @param view
+         */
+        @Override
+        public void onClick(View view) {
+            Intent intent = new
+                    Intent(view.getContext(),
+                    MoneyActivity.class);
+            startActivity(intent);
+        }
     }
 
 }

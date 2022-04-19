@@ -13,7 +13,7 @@
         android:layout_marginBottom="50dp"
         android:gravity="center"
         android:padding="15dp"
-        android:text="Welcome to Grocery Something! Login or Register to get started"
+        android:text="Welcome to Grocery Share! Login or Register to get started"
         android:textSize="34sp"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
