@@ -13,6 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +30,8 @@ import java.util.List;
 public class RoommateFragment extends ListFragment {
 
     private List<User> users;
+    private DatabaseReference shoppingRef;
+    private static final String DEBUG_TAG = "RoommateFragmentDebug";
 
 
     public RoommateFragment() {
@@ -33,12 +41,29 @@ public class RoommateFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        shoppingRef = FirebaseDatabase.getInstance().getReference();
 
         users = new ArrayList<>();
-        users.add(new User("Emily"));
-        users.add(new User("Audrey"));
+        shoppingRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                    User user = dataSnapshot.getValue(User.class);
+                    users.add(user);
+                }
 
+                setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1,
+                        users));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d(DEBUG_TAG, "Error reading the database.");
+            }
+        });
     }
+
+
 
     /**
      * actions when the view is created
@@ -48,10 +73,6 @@ public class RoommateFragment extends ListFragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1,
-                users));
-
         getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
     }
 }

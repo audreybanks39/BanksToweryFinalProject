@@ -35,4 +35,9 @@ public class User {
     public void setTotalPurchased(float totalPurchased) {
         this.totalPurchased = totalPurchased;
     }
+
+    @Override
+    public String toString() {
+        return name + "\n" + totalPurchased;
+    }
 }

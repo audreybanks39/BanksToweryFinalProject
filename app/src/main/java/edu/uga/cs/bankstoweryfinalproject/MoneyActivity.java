@@ -1,11 +1,13 @@
 package edu.uga.cs.bankstoweryfinalproject;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.ListFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,19 +16,32 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MoneyActivity extends AppCompatActivity {
 
 
     private TextView totalCost;
+    private float totalCostFloat;
     private TextView costPer;
 
     private Button button;
+
+    private static final String DEBUG_TAG = "MoneyActivityDebug";
+
+    private DatabaseReference shoppingRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_money);
+
+        shoppingRef = FirebaseDatabase.getInstance().getReference();
+        totalCostFloat = 0f;
 
         totalCost = findViewById(R.id.totalCost);
         costPer = findViewById(R.id.CostPerRoomie);
@@ -34,10 +49,34 @@ public class MoneyActivity extends AppCompatActivity {
         button = findViewById(R.id.moneyBreakdownButton);
         button.setOnClickListener(new DebtButtonClickListener());
 
+        calculateTotalPrice();
+
+
         //action bar to enable to back button
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+    private void calculateTotalPrice() {
+        shoppingRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                    User user = dataSnapshot.getValue(User.class);
+                    totalCostFloat = totalCostFloat + user.totalPurchased;
+                }
+
+                totalCost.setText("Total Cost: " + String.format("%.2f", totalCostFloat));
+                costPer.setText("Cost Per Roommate: " + String.format("%.2f", (totalCostFloat / snapshot.getChildrenCount())));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d(DEBUG_TAG, "Error reading the database.");
+            }
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

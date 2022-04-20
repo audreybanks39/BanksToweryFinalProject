@@ -226,6 +226,7 @@ public class GroceryListActivity extends AppCompatActivity {
                 PurchasedGroup purchasedGroup = new PurchasedGroup();
                 purchasedGroup.setShoppingItems(purchasedList);
                 purchasedGroup.setTotalPrice(price);
+                purchasedGroup.setPurchasedUser(currentUser.getDisplayName());
 
                 for (int i = 0; i < purchasedList.size(); i++) {
                     removeShoppingItem(purchasedList.get(i));
@@ -237,7 +238,7 @@ public class GroceryListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d(DEBUG_TAG, "Error reading the database.");
             }
         });
     }

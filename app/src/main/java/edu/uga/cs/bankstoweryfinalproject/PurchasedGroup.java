@@ -6,7 +6,9 @@ public class PurchasedGroup {
 
     public float totalPrice;
     public List<ShoppingItem> shoppingItems;
+    public String purchasedUser;
     public String id;
+
 
     public PurchasedGroup() {
     }
@@ -33,6 +35,14 @@ public class PurchasedGroup {
 
     public void setTotalPrice(float totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getPurchasedUser() {
+        return purchasedUser;
+    }
+
+    public void setPurchasedUser(String purchasedUser) {
+        this.purchasedUser = purchasedUser;
     }
 
     @Override
