@@ -84,7 +84,7 @@ public class RecentPurchaseActivity extends AppCompatActivity {
         }
     }
 
-    private void onFinishEditPurchasedItemListener(int pos, float price) {
+    public void onFinishEditPurchasedItemListener(int pos, float price) {
         list.get(pos).setTotalPrice(price);
         adapter.notifyDataSetChanged();
 
@@ -146,14 +146,14 @@ public class RecentPurchaseActivity extends AppCompatActivity {
 
                 listView.setAdapter(adapter);
 
-//                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//                    @Override
-//                    public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
-//                        DialogFragment newFragment = EditItemFragment.newInstance(pos, list.get(pos).item);
-//                        newFragment.show(getSupportFragmentManager(), null);
-//                        return true;
-//                    }
-//                });
+                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                        DialogFragment newFragment = EditPriceFragment.newInstance(pos);
+                        newFragment.show(getSupportFragmentManager(), null);
+                        return true;
+                    }
+                });
             }
 
             @Override

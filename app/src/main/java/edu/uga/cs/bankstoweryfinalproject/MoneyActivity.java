@@ -66,8 +66,8 @@ public class MoneyActivity extends AppCompatActivity {
                     totalCostFloat = totalCostFloat + user.totalPurchased;
                 }
 
-                totalCost.setText("Total Cost: " + String.format("%.2f", totalCostFloat));
-                costPer.setText("Cost Per Roommate: " + String.format("%.2f", (totalCostFloat / snapshot.getChildrenCount())));
+                totalCost.setText("Total Cost: $" + String.format("%.2f", totalCostFloat));
+                costPer.setText("Cost Per Roommate: $" + String.format("%.2f", (totalCostFloat / snapshot.getChildrenCount())));
             }
 
             @Override
