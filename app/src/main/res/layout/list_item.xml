@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listTextHolder2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <CheckBox
+        android:id="@+id/listTextHolder"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Simple CheckBox"
+        android:padding="10dp"
+        android:checked="false" />  <!-- gravity of the check box-->
+</androidx.constraintlayout.widget.ConstraintLayout>

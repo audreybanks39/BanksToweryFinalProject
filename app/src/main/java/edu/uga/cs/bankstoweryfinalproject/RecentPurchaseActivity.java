@@ -130,8 +130,7 @@ public class RecentPurchaseActivity extends AppCompatActivity {
                     Log.d(DEBUG_TAG, "item added.");
                 }
 
-                adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_multiple_choice,
-                        android.R.id.text1, list);
+                adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, R.id.listTextHolder, list);
 
                 listView.setAdapter(adapter);
 
