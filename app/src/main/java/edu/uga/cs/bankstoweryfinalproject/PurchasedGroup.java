@@ -52,7 +52,7 @@ public class PurchasedGroup {
             group = group + shoppingItems.get(i).item + "\n";
         }
 
-        group = group + totalPrice;
+        group = group + "$" + totalPrice;
         return group;
     }
 }

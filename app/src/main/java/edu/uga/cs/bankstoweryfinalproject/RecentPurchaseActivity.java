@@ -35,6 +35,7 @@ public class RecentPurchaseActivity extends AppCompatActivity {
     private Button delete;
     private Button settleCost;
     private TextView totalCost;
+    private float totalCostFloat;
 
     private DatabaseReference shoppingRef;
     private FirebaseUser currentUser;
@@ -47,6 +48,7 @@ public class RecentPurchaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recent_purchase);
         shoppingRef = FirebaseDatabase.getInstance().getReference();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        totalCostFloat = 0f;
 
         //action bar to enable to back button
         assert getSupportActionBar() != null;
@@ -57,7 +59,6 @@ public class RecentPurchaseActivity extends AppCompatActivity {
         settleCost = findViewById(R.id.settleCostButton);
         settleCost.setOnClickListener(new SettleCostButtonListener());
         totalCost = findViewById(R.id.totalCost);
-        totalCost.setText("Total Cost: ");
 
         listView = findViewById(R.id.listContainer2);
         list = new ArrayList<>();
@@ -81,6 +82,13 @@ public class RecentPurchaseActivity extends AppCompatActivity {
         public void onClick(View view) {
 
         }
+    }
+
+    private void onFinishEditPurchasedItemListener(int pos, float price) {
+        list.get(pos).setTotalPrice(price);
+        adapter.notifyDataSetChanged();
+
+        shoppingRef.child("purchasedItems").child(list.get(pos).id).child("totalPrice").setValue(price);
     }
 
     @Override
@@ -127,9 +135,12 @@ public class RecentPurchaseActivity extends AppCompatActivity {
                 Log.d(DEBUG_TAG, "snapshot children: " + snapshot.getChildrenCount());
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
                     PurchasedGroup purchasedGroup = dataSnapshot.getValue(PurchasedGroup.class);
+                    totalCostFloat = totalCostFloat + purchasedGroup.getTotalPrice();
                     list.add(purchasedGroup);
                     Log.d(DEBUG_TAG, "item added.");
                 }
+
+                totalCost.setText("Total Cost: $" + String.format("%.2f", totalCostFloat));
 
                 adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, R.id.listTextHolder, list);
 

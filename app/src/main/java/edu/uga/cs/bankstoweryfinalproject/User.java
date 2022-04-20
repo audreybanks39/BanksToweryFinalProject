@@ -38,6 +38,6 @@ public class User {
 
     @Override
     public String toString() {
-        return name + "\n" + totalPurchased;
+        return name + "\n$" + totalPurchased;
     }
 }
