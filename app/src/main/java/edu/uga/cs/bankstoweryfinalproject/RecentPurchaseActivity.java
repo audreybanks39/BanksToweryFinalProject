@@ -57,6 +57,7 @@ public class RecentPurchaseActivity extends AppCompatActivity {
         settleCost = findViewById(R.id.settleCostButton);
         settleCost.setOnClickListener(new SettleCostButtonListener());
         totalCost = findViewById(R.id.totalCost);
+        totalCost.setText("Total Cost: ");
 
         listView = findViewById(R.id.listContainer2);
         list = new ArrayList<>();
