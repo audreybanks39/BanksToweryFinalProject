@@ -2,6 +2,7 @@ package edu.uga.cs.bankstoweryfinalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,9 +11,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,6 +25,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class HomeActivity extends AppCompatActivity {
 
     private Button grocery;
@@ -29,6 +34,18 @@ public class HomeActivity extends AppCompatActivity {
     private Button money;
     private FirebaseUser currentUser;
     private TextView text;
+
+    private ListView listView;
+    private ArrayList<ShoppingItem> list;
+    private ArrayAdapter<ShoppingItem> adapter;
+    private DatabaseReference shoppingRef;
+    private DatabaseReference shoppingRef2;
+
+
+    private ListView listView2;
+    private ArrayList<PurchasedGroup> list2;
+    private ArrayAdapter<PurchasedGroup> adapter2;
+
 
     private static final String DEBUG_TAG = "HomeActivityDebug";
 
@@ -47,10 +64,24 @@ public class HomeActivity extends AppCompatActivity {
         recentPurchases.setOnClickListener(new RecentButtonClickListener());
         money.setOnClickListener(new MoneyButtonClickListener());
 
+        shoppingRef = FirebaseDatabase.getInstance().getReference();
+        shoppingRef2 = FirebaseDatabase.getInstance().getReference();
+
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         text = findViewById(R.id.textView);
         String s = currentUser.getDisplayName();
         text.setText("Welcome " + s + "!");
+
+        listView = findViewById(R.id.groceryListSmall);
+        list = new ArrayList<>();
+
+        listView2 = findViewById(R.id.recentPurchasesList);
+        list2 = new ArrayList<>();
+
+        //get list from database and update local list
+        shoppingRef.child("shoppingList").addListenerForSingleValueEvent(initializeShoppingList());
+        shoppingRef2.child("purchasedItems").addListenerForSingleValueEvent(initializePurchaseList());
+
 
         Log.d(DEBUG_TAG, "Current user: " + currentUser.getEmail());
         if (currentUser.getDisplayName() != null) {
@@ -159,5 +190,61 @@ public class HomeActivity extends AppCompatActivity {
             }
         };
         return nameListener;
+    }
+    /**
+     * Creates ValueEventListener that initializes the shopping list.
+     * @return ValueEventListener.
+     */
+    private ValueEventListener initializeShoppingList() {
+        return new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    ShoppingItem shoppingItem = dataSnapshot.getValue(ShoppingItem.class);
+                    list.add(shoppingItem);
+                    Log.d(DEBUG_TAG, "item added: " + shoppingItem.item);
+                }
+
+                adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_multiple_choice,
+                        android.R.id.text1, list);
+
+                listView.setAdapter(adapter);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d(DEBUG_TAG, "Error reading the database.");
+            }
+        };
+    }
+    /**
+     * Creates ValueEventListener that initializes the purchased list.
+     * @return ValueEventListener.
+     */
+    private ValueEventListener initializePurchaseList() {
+        return new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d(DEBUG_TAG, "snapshot children: " + snapshot.getChildrenCount());
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                    PurchasedGroup purchasedGroup = dataSnapshot.getValue(PurchasedGroup.class);
+                    list2.add(purchasedGroup);
+                    Log.d(DEBUG_TAG, "item added.");
+                }
+
+
+                adapter2 = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, R.id.listTextHolder, list2);
+
+                listView2.setAdapter(adapter2);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d(DEBUG_TAG, "Error reading the database.");
+            }
+        };
     }
 }
