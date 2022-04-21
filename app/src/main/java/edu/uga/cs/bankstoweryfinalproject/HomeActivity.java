@@ -75,8 +75,24 @@ public class HomeActivity extends AppCompatActivity {
         listView = findViewById(R.id.groceryListSmall);
         list = new ArrayList<>();
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(view.getContext(), GroceryListActivity.class);
+                startActivity(intent);
+            }
+        });
+
         listView2 = findViewById(R.id.recentPurchasesList);
         list2 = new ArrayList<>();
+        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(view.getContext(), RecentPurchaseActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         //get list from database and update local list
         shoppingRef.child("shoppingList").addListenerForSingleValueEvent(initializeShoppingList());
@@ -246,5 +262,22 @@ public class HomeActivity extends AppCompatActivity {
                 Log.d(DEBUG_TAG, "Error reading the database.");
             }
         };
+    }
+    /**
+     * clicking the view allows users to go to the grocery list full page
+     */
+   private class ListViewClickListener implements
+            View.OnClickListener {
+        /**
+         * onCLick function for our overview button
+         * takes us to the overview page, passing along the spinner selection
+         *
+         * @param view
+         */
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(view.getContext(), GroceryListActivity.class);
+            startActivity(intent);
+        }
     }
 }
