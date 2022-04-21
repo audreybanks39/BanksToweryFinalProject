@@ -1,6 +1,7 @@
 package edu.uga.cs.bankstoweryfinalproject;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -17,12 +18,15 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -30,6 +34,7 @@ import java.util.ArrayList;
 public class RecentPurchaseActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayList<PurchasedGroup> list;
+    private ArrayList<PurchasedGroup> deleteList;
     private ArrayAdapter<PurchasedGroup> adapter;
 
     private Button delete;
@@ -71,7 +76,57 @@ public class RecentPurchaseActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
+            deleteList = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                if (listView.isItemChecked(i)) {
+                    deleteList.add(list.get(i));
+                    listView.setItemChecked(i, false);
+                }
+            }
 
+            removePurchasedItem(0);
+        }
+    }
+
+    /**
+     * Removes the purchased group of item from the purchased list, moves them back to the shopping list,
+     * and subtracts the purchase price from the user who marked it off.
+     */
+    private void removePurchasedItem(int n) {
+        if (n < deleteList.size()) {
+            shoppingRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    totalCostFloat = totalCostFloat - deleteList.get(n).getTotalPrice();
+                    totalCost.setText("Total Cost: " + String.format("%.2f", totalCostFloat));
+
+                    list.remove(deleteList.get(n));
+                    adapter.notifyDataSetChanged();
+
+                    shoppingRef.child("purchasedItems").child(deleteList.get(n).getId()).removeValue();
+
+                    for (ShoppingItem item: deleteList.get(n).getShoppingItems()) {
+                        shoppingRef.child("shoppingList").child(item.id).setValue(item);
+                    }
+
+                    User user = snapshot.child(deleteList.get(n).getPurchasedUser()).getValue(User.class);
+                    user.setTotalPurchased(user.getTotalPurchased() - deleteList.get(n).getTotalPrice());
+
+                    shoppingRef.child("users").child(deleteList.get(n).getPurchasedUser())
+                            .child("totalPurchased").setValue(user.totalPurchased).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            removePurchasedItem(n + 1);
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.d(DEBUG_TAG, "Error reading the database.");
+                }
+            });
         }
     }
 
@@ -80,7 +135,8 @@ public class RecentPurchaseActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-
+            Intent intent = new Intent(getApplicationContext(), MoneyActivity.class);
+            startActivity(intent);
         }
     }
 
