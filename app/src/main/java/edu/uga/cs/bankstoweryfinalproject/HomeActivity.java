@@ -29,8 +29,8 @@ import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private Button grocery;
-    private Button recentPurchases;
+//    private Button grocery;
+//    private Button recentPurchases;
     private Button money;
     private FirebaseUser currentUser;
     private TextView text;
@@ -54,14 +54,14 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        grocery = findViewById(R.id.groceryButton);
-        recentPurchases = findViewById(R.id.recentPurchaseButton);
+//        grocery = findViewById(R.id.groceryButton);
+//        recentPurchases = findViewById(R.id.recentPurchaseButton);
         money = findViewById(R.id.moneyButton);
 
         assert getSupportActionBar() != null;
 
-        grocery.setOnClickListener(new GroceryButtonClickListener());
-        recentPurchases.setOnClickListener(new RecentButtonClickListener());
+//        grocery.setOnClickListener(new GroceryButtonClickListener());
+//        recentPurchases.setOnClickListener(new RecentButtonClickListener());
         money.setOnClickListener(new MoneyButtonClickListener());
 
         shoppingRef = FirebaseDatabase.getInstance().getReference();
