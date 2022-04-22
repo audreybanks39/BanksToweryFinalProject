@@ -35,6 +35,7 @@ public class RecentPurchaseActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayList<PurchasedGroup> list;
     private ArrayList<PurchasedGroup> deleteList;
+    private ArrayList<Integer> checkItemPositions;
     private ArrayAdapter<PurchasedGroup> adapter;
 
     private Button delete;
@@ -54,6 +55,11 @@ public class RecentPurchaseActivity extends AppCompatActivity {
         shoppingRef = FirebaseDatabase.getInstance().getReference();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         totalCostFloat = 0f;
+
+        //Get saved checked item positions
+        if (savedInstanceState != null) {
+            checkItemPositions = savedInstanceState.getIntegerArrayList("itemPositions");
+        }
 
         //action bar to enable to back button
         assert getSupportActionBar() != null;
@@ -202,6 +208,13 @@ public class RecentPurchaseActivity extends AppCompatActivity {
 
                 listView.setAdapter(adapter);
 
+                //Set checked items from savedInstance
+                if (checkItemPositions != null) {
+                    for (int i = 0; i < checkItemPositions.size(); i++) {
+                        listView.setItemChecked(checkItemPositions.get(i), true);
+                    }
+                }
+
                 listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
@@ -217,5 +230,20 @@ public class RecentPurchaseActivity extends AppCompatActivity {
                 Log.d(DEBUG_TAG, "Error reading the database.");
             }
         };
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        checkItemPositions = new ArrayList<>();
+
+        //Save checked item positions
+        for (int i = 0; i < list.size(); i++) {
+            if (listView.isItemChecked(i)) {
+                checkItemPositions.add(i);
+            }
+        }
+        outState.putIntegerArrayList("itemPositions", checkItemPositions);
+        Log.d(DEBUG_TAG, "onSaveInstanceState()");
     }
 }

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -61,7 +62,7 @@ public class MoneyActivity extends AppCompatActivity {
         shoppingRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     User user = dataSnapshot.getValue(User.class);
                     totalCostFloat = totalCostFloat + user.totalPurchased;
                 }
@@ -83,8 +84,10 @@ public class MoneyActivity extends AppCompatActivity {
         inflater.inflate(R.menu.main, menu);
         return true;
     }
+
     /**
      * takes in the item and uses it to navigate back to the previous page
+     *
      * @param item
      * @return
      */
@@ -100,14 +103,14 @@ public class MoneyActivity extends AppCompatActivity {
             //
             supportNavigateUpTo(new Intent(this, HomeActivity.class));
             return true;
+        } else if (id == R.id.logout) {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
         }
-        else if (id == R.id.logout){
-        FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-    }
         return super.onOptionsItemSelected(item);
     }
+
     /**
      * Button that lets the users return their money balance to zero.
      */
@@ -121,10 +124,30 @@ public class MoneyActivity extends AppCompatActivity {
          */
         @Override
         public void onClick(View view) {
-            Intent intent = new
-                    Intent(view.getContext(),
-                    MoneyActivity.class);
-            startActivity(intent);
+
+            shoppingRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        User user = dataSnapshot.getValue(User.class);
+                        user.setTotalPurchased(0f);
+                        shoppingRef.child("users").child(user.name).child("totalPurchased").setValue(user.totalPurchased);
+                    }
+
+                    shoppingRef.child("purchasedItems").removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Intent intent = new Intent(view.getContext(), MoneyActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.d(DEBUG_TAG, "Error reading the database.");
+                }
+            });
         }
     }
 

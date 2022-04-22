@@ -6,6 +6,7 @@ import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +40,7 @@ public class GroceryListActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayList<ShoppingItem> list;
     private ArrayAdapter<ShoppingItem> adapter;
+    private ArrayList<Integer> checkItemPositions;
 
     private Button add;
     private Button delete;
@@ -55,6 +57,12 @@ public class GroceryListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grocery_list);
         shoppingRef = FirebaseDatabase.getInstance().getReference();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        //Get saved checked item positions
+        if (savedInstanceState != null) {
+            checkItemPositions = savedInstanceState.getIntegerArrayList("itemPositions");
+        }
+
         //action bar to enable to back button
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -270,6 +278,13 @@ public class GroceryListActivity extends AppCompatActivity {
 
                 listView.setAdapter(adapter);
 
+                //Set checked items from savedInstance
+                if (checkItemPositions != null) {
+                    for (int i = 0; i < checkItemPositions.size(); i++) {
+                        listView.setItemChecked(checkItemPositions.get(i), true);
+                    }
+                }
+
                 listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
@@ -285,5 +300,21 @@ public class GroceryListActivity extends AppCompatActivity {
                 Log.d(DEBUG_TAG, "Error reading the database.");
             }
         };
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        checkItemPositions = new ArrayList<>();
+
+        //Save checked item positions
+        for (int i = 0; i < list.size(); i++) {
+            if (listView.isItemChecked(i)) {
+                checkItemPositions.add(i);
+            }
+        }
+        outState.putIntegerArrayList("itemPositions", checkItemPositions);
+        Log.d(DEBUG_TAG, "onSaveInstanceState()");
     }
 }
