@@ -221,8 +221,7 @@ public class HomeActivity extends AppCompatActivity {
                     Log.d(DEBUG_TAG, "item added: " + shoppingItem.item);
                 }
 
-                adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_multiple_choice,
-                        android.R.id.text1, list);
+                adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item_no_check, R.id.listTextHolder2, list);
 
                 listView.setAdapter(adapter);
 
@@ -249,12 +248,9 @@ public class HomeActivity extends AppCompatActivity {
                     Log.d(DEBUG_TAG, "item added.");
                 }
 
-
-                adapter2 = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, R.id.listTextHolder, list2);
+                adapter2 = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item_no_check, R.id.listTextHolder2, list2);
 
                 listView2.setAdapter(adapter2);
-
-
             }
 
             @Override

@@ -23,6 +23,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * Activity to show the breakdown of the total cost for all the roommates.
+ */
 public class MoneyActivity extends AppCompatActivity {
 
 
@@ -58,6 +61,9 @@ public class MoneyActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    /**
+     * Calculate the total price for all the users and divide it equally between all of them.
+     */
     private void calculateTotalPrice() {
         shoppingRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

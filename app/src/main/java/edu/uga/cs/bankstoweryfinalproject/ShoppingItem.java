@@ -1,5 +1,8 @@
 package edu.uga.cs.bankstoweryfinalproject;
 
+/**
+ * A POJO class to represent a ShoppingItem in the database.
+ */
 public class ShoppingItem {
     public String item;
     public String id;

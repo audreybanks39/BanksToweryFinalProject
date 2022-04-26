@@ -80,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Firebase Sign-in Intent
+     */
     private ActivityResultLauncher<Intent> signInLauncher =
             registerForActivityResult(
                     new FirebaseAuthUIActivityResultContract(),

@@ -3,15 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/activity_grocery_list.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/activity_home.xml" value="0.4" />
+        <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/activity_grocery_list.xml" value="0.264" />
+        <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/activity_home.xml" value="0.264" />
         <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/activity_money.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/activity_recent_purchase.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/activity_register.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/fragment_add_item.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/fragment_edit_item.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/fragment_purchase_item.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/list_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Audrey/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/list_item_no_check.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/emnot/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/activity_grocery_list.xml" value="0.1796875" />
         <entry key="..\:/Users/emnot/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/activity_home.xml" value="0.1796875" />
         <entry key="..\:/Users/emnot/AndroidStudioProjects/BanksToweryFinalProject/app/src/main/res/layout/activity_login.xml" value="0.1796875" />

@@ -13,7 +13,8 @@
         android:text="Hold down an item to edit"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
         android:id="@+id/listContainer"
@@ -27,28 +28,44 @@
 
     <Button
         android:id="@+id/purchasedButton"
-        android:layout_width="wrap_content"
+        style="@android:style/Widget.Material.Button"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="mark as purchased"
+        android:textAlignment="center"
+        app:flow_verticalAlign="center"
+        android:paddingVertical="20dp"
+        android:textSize="16sp"
+        android:background="?attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/deleteButton" />
 
     <Button
         android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
+        style="@android:style/Widget.Material.Button"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="delete selections"
+        android:paddingVertical="20dp"
+        android:textSize="16sp"
+        android:background="?attr/selectableItemBackground"
+        android:theme="@style/Theme.DeleteButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/purchasedButton"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/addButton"
-        android:layout_width="wrap_content"
+        style="@android:style/Widget.Material.Button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:includeFontPadding="false"
         android:text="add new item"
+        android:paddingVertical="20dp"
+        android:textSize="16sp"
+        android:background="?attr/selectableItemBackground"
+        android:theme="@style/Theme.AcceptButton"
         app:layout_constraintBottom_toTopOf="@+id/deleteButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

@@ -2,6 +2,9 @@ package edu.uga.cs.bankstoweryfinalproject;
 
 import java.util.List;
 
+/**
+ * POJO class to represent a group of purchased ShoppingItems in the database.
+ */
 public class PurchasedGroup {
 
     public float totalPrice;

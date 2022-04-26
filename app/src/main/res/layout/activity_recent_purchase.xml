@@ -18,9 +18,12 @@
 
     <Button
         android:id="@+id/settleCostButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Settle Cost"
+        android:background="?attr/selectableItemBackground"
+        android:paddingVertical="20dp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -28,9 +31,14 @@
 
     <Button
         android:id="@+id/deleteButton2"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="delete selections"
+        android:background="?attr/selectableItemBackground"
+        android:paddingTop="10dp"
+        android:paddingBottom="11dp"
+        android:textSize="16sp"
+        android:theme="@style/Theme.DeleteButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/settleCostButton"
         app:layout_constraintHorizontal_bias="0.5"
@@ -42,6 +50,7 @@
         android:layout_height="wrap_content"
         android:text="TextView"
         android:textSize="20sp"
+        android:paddingVertical="10dp"
         app:layout_constraintBottom_toTopOf="@+id/deleteButton2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

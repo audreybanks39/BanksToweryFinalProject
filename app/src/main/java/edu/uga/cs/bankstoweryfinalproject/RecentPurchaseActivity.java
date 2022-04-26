@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,6 +32,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Recent Purchase Activity that shows the all of the purchased items.
+ */
 public class RecentPurchaseActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayList<PurchasedGroup> list;
@@ -77,11 +81,21 @@ public class RecentPurchaseActivity extends AppCompatActivity {
         shoppingRef.child("purchasedItems").addListenerForSingleValueEvent(initializePurchaseList());
     }
 
+    /**
+     * Delete button listener that deletes the selected item from the purchased list
+     * and moves it back to the shopping list.
+     */
     private class DeleteButtonListener implements
             View.OnClickListener {
 
         @Override
         public void onClick(View view) {
+            //Check if any items are checked before continuing
+            if (listView.getCheckedItemCount() == 0) {
+                Toast.makeText(getApplicationContext(), "No Items Selected", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             deleteList = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
                 if (listView.isItemChecked(i)) {
@@ -136,6 +150,9 @@ public class RecentPurchaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Settle cost button listener that takes the user to the money breakdown activity.
+     */
     private class SettleCostButtonListener implements
             View.OnClickListener {
 
@@ -146,6 +163,11 @@ public class RecentPurchaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Finish dialog listener to edit the price of a purchased item.
+     * @param pos position of the item to edit.
+     * @param price new price for the item.
+     */
     public void onFinishEditPurchasedItemListener(int pos, float price) {
         list.get(pos).setTotalPrice(price);
         adapter.notifyDataSetChanged();

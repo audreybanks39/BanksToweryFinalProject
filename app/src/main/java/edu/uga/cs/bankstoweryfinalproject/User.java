@@ -3,7 +3,7 @@ package edu.uga.cs.bankstoweryfinalproject;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 /**
- * POJO class to represent the User.
+ * POJO class to represent the User in the database.
  */
 @IgnoreExtraProperties
 public class User {

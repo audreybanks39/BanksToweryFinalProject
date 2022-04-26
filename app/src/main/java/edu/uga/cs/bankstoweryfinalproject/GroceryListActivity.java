@@ -33,7 +33,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
- * Activity that holds the shopping list
+ * Activity that holds the shopping list.
  */
 public class GroceryListActivity extends AppCompatActivity {
 
@@ -140,6 +140,11 @@ public class GroceryListActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
+            //Check if any items are checked before continuing
+            if (listView.getCheckedItemCount() == 0) {
+                Toast.makeText(getApplicationContext(), "No Items Selected", Toast.LENGTH_SHORT).show();
+                return;
+            }
             DialogFragment newFragment = new PurchaseItemFragment();
             newFragment.show(getSupportFragmentManager(), null);
         }
@@ -152,6 +157,12 @@ public class GroceryListActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
+            //Check if any items are checked before continuing
+            if (listView.getCheckedItemCount() == 0) {
+                Toast.makeText(getApplicationContext(), "No Items Selected", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             ArrayList<ShoppingItem> deleteList = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
                 if (listView.isItemChecked(i)) {
@@ -251,6 +262,11 @@ public class GroceryListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Finish edit dialog listener that edits the name of the selected item.
+     * @param pos the list position of the item to edit.
+     * @param itemName the new name of the item.
+     */
     public void onFinishEditItemDialog(int pos, String itemName) {
         list.get(pos).setItem(itemName);
         adapter.notifyDataSetChanged();
@@ -273,8 +289,7 @@ public class GroceryListActivity extends AppCompatActivity {
                     Log.d(DEBUG_TAG, "item added: " + shoppingItem.item);
                 }
 
-                adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_multiple_choice,
-                        android.R.id.text1, list);
+                adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item, R.id.listTextHolder, list);
 
                 listView.setAdapter(adapter);
 

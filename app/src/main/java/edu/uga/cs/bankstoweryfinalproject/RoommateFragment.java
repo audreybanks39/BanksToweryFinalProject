@@ -43,6 +43,7 @@ public class RoommateFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         shoppingRef = FirebaseDatabase.getInstance().getReference();
 
+        //Used to fill in a list of all the rommates and their total purchased prices in the money breakdown.
         users = new ArrayList<>();
         shoppingRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
