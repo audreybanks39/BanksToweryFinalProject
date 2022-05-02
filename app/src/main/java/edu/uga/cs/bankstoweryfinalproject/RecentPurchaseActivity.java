@@ -169,10 +169,30 @@ public class RecentPurchaseActivity extends AppCompatActivity {
      * @param price new price for the item.
      */
     public void onFinishEditPurchasedItemListener(int pos, float price) {
+        float oldPrice = list.get(pos).getTotalPrice();
         list.get(pos).setTotalPrice(price);
         adapter.notifyDataSetChanged();
 
         shoppingRef.child("purchasedItems").child(list.get(pos).id).child("totalPrice").setValue(price);
+        totalCostFloat = (totalCostFloat - oldPrice) + price;
+        totalCost.setText("Total Cost: " + String.format("%.2f", totalCostFloat));
+
+        shoppingRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                User user = snapshot.child(list.get(pos).getPurchasedUser()).getValue(User.class);
+                user.setTotalPurchased((user.getTotalPurchased() - oldPrice) + price);
+
+                shoppingRef.child("users").child(list.get(pos).getPurchasedUser())
+                        .child("totalPurchased").setValue(user.totalPurchased);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d(DEBUG_TAG, "Error reading the database.");
+            }
+        });
     }
 
     @Override
