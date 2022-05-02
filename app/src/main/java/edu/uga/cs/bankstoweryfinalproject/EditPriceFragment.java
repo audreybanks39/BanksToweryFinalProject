@@ -50,7 +50,7 @@ public class EditPriceFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View layout = inflater.inflate(R.layout.fragment_purchase_item,
+        final View layout = inflater.inflate(R.layout.fragment_edit_price,
                 (ViewGroup) getActivity().findViewById(R.id.root));
 
         item = layout.findViewById(R.id.edit);
